@@ -2,13 +2,17 @@ import Config
 
 # Configure your database
 config :chat, Chat.Repo,
-  username: "postgres",
-  password: "postgres",
-  hostname: "localhost",
-  database: "chat_dev",
+  username: System.get_env("DB_USERNAME") || "postgres",
+  password: System.get_env("DB_PASSWORD") || "postgres",
+  hostname: System.get_env("DB_HOSTNAME") || "localhost",
+  database: System.get_env("DB_NAME") || "chat_dev",
   stacktrace: true,
   show_sensitive_data_on_connection_error: true,
-  pool_size: 10
+  pool_size: String.to_integer(System.get_env("DB_POOL_SIZE") || "10")
+
+# Redis configuration
+config :chat, :redis,
+  url: System.get_env("REDIS_URL") || "redis://localhost:6379"
 
 # For development, we disable any cache and enable
 # debugging and code reloading.
@@ -19,11 +23,11 @@ config :chat, Chat.Repo,
 config :chat, ChatWeb.Endpoint,
   # Binding to loopback ipv4 address prevents access from other machines.
   # Change to `ip: {0, 0, 0, 0}` to allow access from other machines.
-  http: [ip: {127, 0, 0, 1}, port: 4000],
+  http: [ip: {127, 0, 0, 1}, port: String.to_integer(System.get_env("PORT") || "4000")],
   check_origin: false,
   code_reloader: true,
   debug_errors: true,
-  secret_key_base: "PITkLbdQOMsyfr1Y5hFrhJrCf2+dDTYTbU9rYgRQjNZXuvlBFrEzLqpYnXtqeVWX",
+  secret_key_base: System.get_env("SECRET_KEY_BASE") || "PITkLbdQOMsyfr1Y5hFrhJrCf2+dDTYTbU9rYgRQjNZXuvlBFrEzLqpYnXtqeVWX",
   watchers: []
 
 # ## SSL Support

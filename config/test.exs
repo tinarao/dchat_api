@@ -31,3 +31,5 @@ config :logger, level: :warning
 
 # Initialize plugs at runtime for faster test compilation
 config :phoenix, :plug_init_mode, :runtime
+
+config :chat, Chat.Tokens, encryption_key: "test_secret_key_32_bytes_long_for_testing_32"

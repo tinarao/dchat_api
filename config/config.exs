@@ -11,9 +11,11 @@ config :chat,
   ecto_repos: [Chat.Repo],
   generators: [timestamp_type: :utc_datetime]
 
+config :chat, Chat.Tokens, encryption_key: System.get_env("SECRET")
+
 # Configures the endpoint
 config :chat, ChatWeb.Endpoint,
-  url: [host: "localhost"],
+  url: [host: System.get_env("PHX_HOST") || "localhost"],
   adapter: Bandit.PhoenixAdapter,
   render_errors: [
     formats: [json: ChatWeb.ErrorJSON],
@@ -21,15 +23,6 @@ config :chat, ChatWeb.Endpoint,
   ],
   pubsub_server: Chat.PubSub,
   live_view: [signing_salt: "jQVjlzdi"]
-
-# Configures the mailer
-#
-# By default it uses the "Local" adapter which stores the emails
-# locally. You can see the emails in your browser, at "/dev/mailbox".
-#
-# For production it's recommended to configure a different adapter
-# at the `config/runtime.exs`.
-config :chat, Chat.Mailer, adapter: Swoosh.Adapters.Local
 
 # Configures Elixir's Logger
 config :logger, :console,

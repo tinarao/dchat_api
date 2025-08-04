@@ -3,7 +3,7 @@ defmodule Chat.Repo.Migrations.CreateUsers do
 
   def change do
     create table(:users) do
-      add :name, :string
+      add :name, :string, unique: true
       add :password_hash, :string
 
       timestamps(type: :utc_datetime)

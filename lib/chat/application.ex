@@ -10,6 +10,7 @@ defmodule Chat.Application do
     children = [
       ChatWeb.Telemetry,
       Chat.Repo,
+      Chat.Redis,
       {DNSCluster, query: Application.get_env(:chat, :dns_cluster_query) || :ignore},
       {Phoenix.PubSub, name: Chat.PubSub},
       # Start the Finch HTTP client for sending emails

@@ -9,3 +9,11 @@
 #
 # We recommend using the bang functions (`insert!`, `update!`
 # and so on) as they will fail if something goes wrong.
+
+alias Chat.Users
+
+Users.create_user(%{
+  username: "testuser",
+  name: "Test User",
+  email: "test@example.com"
+})
