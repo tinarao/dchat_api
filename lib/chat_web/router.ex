@@ -7,9 +7,11 @@ defmodule ChatWeb.Router do
 
   scope "/api", ChatWeb do
     pipe_through :api
+
+    get "/rooms", ApiRoomsController, :list
+    get "/rooms/:id", ApiRoomsController, :show
   end
 
-  # Enable LiveDashboard and Swoosh mailbox preview in development
   if Application.compile_env(:chat, :dev_routes) do
     # If you want to use the LiveDashboard in production, you should put
     # it behind authentication and allow only admins to access it.
