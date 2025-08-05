@@ -19,5 +19,11 @@ defmodule Chat.Users.User do
     user
     |> cast(attrs, [:name, :password_hash])
     |> validate_required([:name, :password_hash])
+    |> validate_length(:password,
+      min: 8,
+      max: 128,
+      message: "пароль должен иметь длину от 8 до 128 символов"
+    )
+    |> unique_constraint(:name)
   end
 end
