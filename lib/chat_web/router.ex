@@ -8,6 +8,7 @@ defmodule ChatWeb.Router do
       credentials: true
 
     plug :accepts, ["json"]
+    plug Plugs.DeviceID
   end
 
   pipeline :protected do
@@ -21,6 +22,7 @@ defmodule ChatWeb.Router do
 
     get "/auth/verify", ApiAuthController, :verify_session
     post "/auth/login", ApiAuthController, :login
+    post "/auth/signup", ApiAuthController, :signup
 
     pipe_through :protected
     get "/rooms", ApiRoomsController, :list

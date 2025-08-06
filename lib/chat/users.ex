@@ -59,10 +59,6 @@ defmodule Chat.Users do
       |> User.register_changeset(attrs)
 
     Repo.insert(user_data)
-
-    # %User{}
-    # |> User.register_changeset(attrs)
-    # |> Repo.insert()
   end
 
   @doc """
@@ -81,6 +77,23 @@ defmodule Chat.Users do
     user
     |> User.changeset(attrs)
     |> Repo.update()
+  end
+
+  @doc """
+  Checks if user exists by name.
+
+  ## Examples
+
+      iex> exists?(name)
+      true
+
+      iex> exists?(name)
+      false
+
+  """
+  def exists?(name) do
+    query = from u in User, where: u.name == ^name
+    Repo.exists?(query)
   end
 
   @doc """

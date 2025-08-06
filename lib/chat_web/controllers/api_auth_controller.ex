@@ -1,17 +1,22 @@
 defmodule ChatWeb.ApiAuthController do
-  alias Chat.Sessions
   alias Chat.Tokens
   alias ChatWeb.Auth
 
   use ChatWeb, :controller
 
   def login(conn, %{"name" => name, "password" => password}) do
-    remote_ip = Auth.extract_ip(conn)
-    user_agent = Auth.extract_user_agent(conn)
+    device_id = conn.assigns.device_id
 
-    case Chat.Auth.login(name, password, user_agent, remote_ip) do
-      {:ok, token} ->
-        conn |> put_status(201) |> json(%{token: token})
+    case Chat.Auth.login(name, password, device_id) do
+      {:ok, token} -> conn |> put_status(201) |> json(%{token: token})
+      {:error, reason} -> conn |> put_status(400) |> json(%{error: reason})
+    end
+  end
+
+  def signup(conn, %{"name" => name, "password" => password}) do
+    case Chat.Auth.signup(name, password) do
+      {:ok, user} ->
+        conn |> put_status(201) |> json(%{user: user})
 
       {:error, reason} ->
         conn |> put_status(400) |> json(%{error: reason})
