@@ -14,23 +14,23 @@ defmodule Chat.Redis do
     {:ok, conn}
   end
 
-  def set_session(user_id, session_data, ttl \\ 3600) do
-    key = "session:#{user_id}"
+  def set_session(session_key, session_data, ttl \\ 3600) do
+    key = "session:#{session_key}"
     GenServer.call(__MODULE__, {:set_session, key, session_data, ttl})
   end
 
-  def get_session(user_id) do
-    key = "session:#{user_id}"
+  def get_session(session_key) do
+    key = "session:#{session_key}"
     GenServer.call(__MODULE__, {:get_session, key})
   end
 
-  def delete_session(user_id) do
-    key = "session:#{user_id}"
+  def delete_session(session_key) do
+    key = "session:#{session_key}"
     GenServer.call(__MODULE__, {:delete_session, key})
   end
 
-  def session_exists?(user_id) do
-    key = "session:#{user_id}"
+  def session_exists?(session_key) do
+    key = "session:#{session_key}"
     GenServer.call(__MODULE__, {:session_exists?, key})
   end
 
@@ -45,13 +45,17 @@ defmodule Chat.Redis do
   @impl true
   def handle_call({:get_session, key}, _from, conn) do
     case Redix.command(conn, ["GET", key]) do
-      {:ok, nil} -> {:reply, nil, conn}
+      {:ok, nil} ->
+        {:reply, nil, conn}
+
       {:ok, data} ->
         case Jason.decode(data) do
           {:ok, session_data} -> {:reply, session_data, conn}
           {:error, _} -> {:reply, nil, conn}
         end
-      {:error, reason} -> {:reply, {:error, reason}, conn}
+
+      {:error, reason} ->
+        {:reply, {:error, reason}, conn}
     end
   end
 

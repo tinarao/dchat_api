@@ -1,6 +1,7 @@
 defmodule Chat.Auth do
   alias Chat.Tokens
   alias Chat.Users
+  alias Chat.Sessions
 
   def login(name, password, user_agent, remote_ip) do
     with %Users.User{} = user <- Users.get_user_by_name(name),
@@ -11,6 +12,9 @@ defmodule Chat.Auth do
              user_id: user.id,
              device_id: device_id
            }) do
+      Sessions.create_session(token, user.name, device_id)
+      |> IO.inspect()
+
       {:ok, token |> to_string()}
     else
       nil ->

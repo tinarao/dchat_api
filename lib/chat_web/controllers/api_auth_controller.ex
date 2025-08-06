@@ -1,4 +1,5 @@
 defmodule ChatWeb.ApiAuthController do
+  alias Chat.Sessions
   alias Chat.Tokens
   alias ChatWeb.Auth
 
@@ -18,8 +19,12 @@ defmodule ChatWeb.ApiAuthController do
   end
 
   def verify_session(conn, _params) do
+    # skeleton, pretty much
+    # todo IMPROVE
     with {:ok, token} <- Auth.extract_token(conn),
          {:ok, data} <- Tokens.decrypt(token) do
+      IO.inspect(data)
+
       conn
       |> put_status(200)
       |> json(%{data: data})

@@ -1,4 +1,5 @@
 defmodule ChatWeb.ApiAuthControllerTest do
+  alias Chat.Sessions
   alias Chat.UsersFixtures
   use ChatWeb.ConnCase, async: true
 
@@ -8,7 +9,7 @@ defmodule ChatWeb.ApiAuthControllerTest do
       assert conn.status === 400
     end
 
-    test "request with valid data should pass and return token", %{conn: conn} do
+    test "request with valid data should pass, create session and return token", %{conn: conn} do
       changeset = %{
         name: "tinarao",
         password: "123456_789"
@@ -20,6 +21,12 @@ defmodule ChatWeb.ApiAuthControllerTest do
       assert conn.status == 201
       response = json_response(conn, 201)
       assert Map.has_key?(response, "token")
+      token = response["token"]
+
+      # validate session
+      assert Sessions.session_exists?(token)
+      assert {:ok, session} = Sessions.get_session(token)
+      assert session["user_name"] == changeset.name
     end
   end
 
