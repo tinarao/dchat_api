@@ -1,13 +1,28 @@
 defmodule ChatWeb.Router do
+  alias ChatWeb.Plugs
   use ChatWeb, :router
 
   pipeline :api do
+    plug CORSPlug,
+      origin: ["http://localhost:1420"],
+      credentials: true
+
     plug :accepts, ["json"]
+  end
+
+  pipeline :protected do
+    plug Plugs.Protected
   end
 
   scope "/api", ChatWeb do
     pipe_through :api
 
+    options "/*path", OptionsController, :options
+
+    get "/auth/verify", ApiAuthController, :verify_session
+    post "/auth/login", ApiAuthController, :login
+
+    pipe_through :protected
     get "/rooms", ApiRoomsController, :list
     get "/rooms/:id", ApiRoomsController, :show
   end

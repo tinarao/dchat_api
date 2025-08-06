@@ -26,4 +26,9 @@ erl_crash.dump
 chat-*.tar
 
 *.env
+.elixir-*
+.elixir_*
 
+# my things
+TESTING_GUIDE.md
+test_examples.exs

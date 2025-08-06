@@ -1,9 +1,9 @@
-start: docker
-	run
+start: docker run
 
 docker:
 	docker compose up -d
-
 run:
-	@export $$(cat .env | xargs) && \
-	mix phx.server
+	@export $$(cat .env | xargs) && mix phx.server
+
+migrate:
+	@export $$(cat .env | xargs) && mix ecto.migrate

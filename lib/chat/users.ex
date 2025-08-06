@@ -37,8 +37,8 @@ defmodule Chat.Users do
   """
   def get_user!(id), do: Repo.get!(User, id)
 
-  def get_user_by_username(username) do
-    Repo.get_by(User, name: username)
+  def get_user_by_name(name) do
+    Repo.get_by(User, name: name)
   end
 
   @doc """
@@ -54,9 +54,15 @@ defmodule Chat.Users do
 
   """
   def create_user(attrs \\ %{}) do
-    %User{}
-    |> User.changeset(attrs)
-    |> Repo.insert()
+    user_data =
+      %User{}
+      |> User.register_changeset(attrs)
+
+    Repo.insert(user_data)
+
+    # %User{}
+    # |> User.register_changeset(attrs)
+    # |> Repo.insert()
   end
 
   @doc """
@@ -104,5 +110,9 @@ defmodule Chat.Users do
   """
   def change_user(%User{} = user, attrs \\ %{}) do
     User.changeset(user, attrs)
+  end
+
+  def verify_password(%User{password_hash: hash}, password) when is_binary(password) do
+    Argon2.verify_pass(password, hash)
   end
 end

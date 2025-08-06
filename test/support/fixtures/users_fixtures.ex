@@ -10,11 +10,12 @@ defmodule Chat.UsersFixtures do
   def user_fixture(attrs \\ %{}) do
     {:ok, user} =
       attrs
-      |> Enum.into(%{
-        name: "some name",
-        password_hash: "some password_hash"
-      })
       |> Chat.Users.create_user()
+
+    # |> Enum.into(%{
+    #   name: attrs.username,
+    #   password: attrs.password
+    # })
 
     user
   end
