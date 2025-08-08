@@ -1,6 +1,6 @@
 defmodule Chat.Sessions do
   # hour
-  @session_ttl 3600
+  @session_ttl 3600 * 24 * 30 * 4
 
   def create_session(session_key, user_name, device_id) do
     session_data = %{

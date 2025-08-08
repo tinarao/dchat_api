@@ -4,7 +4,7 @@ defmodule Chat.RoomMembers.RoomMember do
 
   @derive {
     Jason.Encoder,
-    only: [:id, :room_id, :user_id, :inserted_at, :updated_at]
+    only: [:id, :room_id, :user_id, :user, :room, :inserted_at, :updated_at]
   }
 
   schema "room_members" do

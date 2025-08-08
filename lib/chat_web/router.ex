@@ -27,6 +27,7 @@ defmodule ChatWeb.Router do
     pipe_through :protected
     get "/rooms", ApiRoomsController, :list
     get "/rooms/id/:id", ApiRoomsController, :show
+    get "/rooms/my", ApiRoomsController, :get_my_rooms
     get "/rooms/created_by_me", ApiRoomsController, :get_rooms_i_created
     post "/rooms", ApiRoomsController, :create
   end

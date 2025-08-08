@@ -14,15 +14,22 @@ defmodule ChatWeb.ApiRoomsController do
   def get_rooms_i_created(conn, _params) do
     user = conn.assigns.current_user
 
+    rooms =
+      Rooms.get_by_user_id(user.id)
+
     conn
     |> put_status(200)
     |> json(%{
-      rooms: Rooms.get_by_user_id(user.id)
+      rooms: rooms
     })
   end
 
-  def list(conn, _) do
-    conn |> put_status(200) |> json(%{rooms: Rooms.list_rooms()})
+  def get_my_rooms(conn, _) do
+    user = conn.assigns.current_user
+
+    rooms = Rooms.get_rooms_user_participates_in(user.id)
+    IO.inspect(rooms)
+    conn |> put_status(200) |> json(%{rooms: rooms})
   end
 
   def create(conn, %{"withName" => with_name, "isPrivate" => is_private}) do

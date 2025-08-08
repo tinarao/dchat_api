@@ -71,16 +71,18 @@ defmodule Chat.RoomMembers do
     }
 
     case Repo.transaction(fn ->
-      {:ok, member1} = %RoomMember{}
-      |> RoomMember.changeset(first_changeset)
-      |> Repo.insert()
+           {:ok, member1} =
+             %RoomMember{}
+             |> RoomMember.changeset(first_changeset)
+             |> Repo.insert()
 
-      {:ok, member2} = %RoomMember{}
-      |> RoomMember.changeset(second_changeset)
-      |> Repo.insert()
+           {:ok, member2} =
+             %RoomMember{}
+             |> RoomMember.changeset(second_changeset)
+             |> Repo.insert()
 
-      [member1, member2]
-    end) do
+           [member1, member2]
+         end) do
       {:ok, members} -> {:ok, members}
       {:error, reason} -> {:error, reason}
     end

@@ -4,6 +4,7 @@ defmodule Chat.Rooms do
   """
 
   import Ecto.Query, warn: false
+  alias Chat.RoomMembers
   alias Chat.Repo
 
   alias Chat.Rooms.Room
@@ -40,12 +41,33 @@ defmodule Chat.Rooms do
   def get_room(id), do: Repo.get(Room, id)
 
   @doc """
-  Returns a list of rooms created by user 
+  Returns a list of rooms created by user
   """
   def get_by_user_id(user_id) do
     Room
     |> where([r], r.creator_id == ^user_id)
     |> preload(:creator)
+    |> Repo.all()
+  end
+
+  @doc """
+  Returns a list of rooms user joined
+  """
+  def get_my_rooms(user_id) do
+    RoomMembers.RoomMember
+    |> where([rm], rm.user_id == ^user_id)
+    |> preload([:room, :user])
+    |> Repo.all()
+  end
+
+  @doc """
+  Returns a list of rooms where user participates (as Room objects)
+  """
+  def get_rooms_user_participates_in(user_id) do
+    Room
+    |> join(:inner, [r], rm in RoomMembers.RoomMember, on: r.id == rm.room_id)
+    |> where([r, rm], rm.user_id == ^user_id)
+    |> preload([:creator])
     |> Repo.all()
   end
 
