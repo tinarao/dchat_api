@@ -28,6 +28,8 @@ defmodule Chat.Users.User do
     |> cast(attrs, [:name, :password])
     |> validate_required([:name, :password])
     |> validate_length(:password, min: 8, message: "password is too short")
+    |> validate_length(:name, min: 4, message: "name is too short")
+    |> validate_length(:name, max: 128, message: "name is too long")
     |> unique_constraint(:name)
     |> put_password_hash()
   end

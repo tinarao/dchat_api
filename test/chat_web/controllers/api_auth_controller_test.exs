@@ -95,5 +95,29 @@ defmodule ChatWeb.ApiAuthControllerTest do
 
       assert conn.status === 401
     end
+
+    test "request with non-consistent data should fail", %{conn: conn} do
+      changeset = %{
+        name: "tinarao",
+        password: "123456_789"
+      }
+
+      UsersFixtures.user_fixture(changeset)
+      login_conn = post(conn, ~p"/api/auth/login", changeset)
+
+      assert login_conn.status == 201
+      response = json_response(login_conn, 201)
+      assert Map.has_key?(response, "token")
+      token = response["token"]
+
+      conn
+      |> put_req_header("authorization", "Bearer " <> token)
+      |> assign(:device_id, "invalid")
+
+      conn = get(conn, ~p"/api/auth/verify")
+      assert conn.status == 401
+      response = json_response(conn, 401)
+      assert response["error"] == "unauthorized"
+    end
   end
 end

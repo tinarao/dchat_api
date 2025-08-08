@@ -40,6 +40,16 @@ defmodule Chat.Rooms do
   def get_room(id), do: Repo.get(Room, id)
 
   @doc """
+  Returns a list of rooms created by user 
+  """
+  def get_by_user_id(user_id) do
+    Room
+    |> where([r], r.creator_id == ^user_id)
+    |> preload(:creator)
+    |> Repo.all()
+  end
+
+  @doc """
   Creates a room.
 
   ## Examples

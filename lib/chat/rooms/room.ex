@@ -4,7 +4,7 @@ defmodule Chat.Rooms.Room do
 
   @derive {
     Jason.Encoder,
-    only: [:id, :name, :is_private, :creator, :inserted_at, :updated_at]
+    only: [:id, :name, :is_private, :creator_id, :inserted_at, :updated_at]
   }
 
   schema "rooms" do

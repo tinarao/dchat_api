@@ -56,6 +56,37 @@ defmodule Chat.RoomMembers do
   end
 
   @doc """
+  Вызывается при создании комнаты.
+  Создаёт две записи, связанные с комнатой (двух участников комнаты)
+  """
+  def on_room_create(room_id, user_id_first, user_id_second) do
+    first_changeset = %{
+      room_id: room_id,
+      user_id: user_id_first
+    }
+
+    second_changeset = %{
+      room_id: room_id,
+      user_id: user_id_second
+    }
+
+    case Repo.transaction(fn ->
+      {:ok, member1} = %RoomMember{}
+      |> RoomMember.changeset(first_changeset)
+      |> Repo.insert()
+
+      {:ok, member2} = %RoomMember{}
+      |> RoomMember.changeset(second_changeset)
+      |> Repo.insert()
+
+      [member1, member2]
+    end) do
+      {:ok, members} -> {:ok, members}
+      {:error, reason} -> {:error, reason}
+    end
+  end
+
+  @doc """
   Updates a room_member.
 
   ## Examples

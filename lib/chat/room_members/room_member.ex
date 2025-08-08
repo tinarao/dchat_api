@@ -2,6 +2,11 @@ defmodule Chat.RoomMembers.RoomMember do
   use Ecto.Schema
   import Ecto.Changeset
 
+  @derive {
+    Jason.Encoder,
+    only: [:id, :room_id, :user_id, :inserted_at, :updated_at]
+  }
+
   schema "room_members" do
     belongs_to :room, Chat.Rooms.Room
     belongs_to :user, Chat.Users.User
