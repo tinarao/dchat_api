@@ -5,9 +5,14 @@ defmodule ChatWeb.ApiRoomsController do
   use ChatWeb, :controller
 
   def show(conn, %{"id" => id}) do
-    case Rooms.get_room(id) do
-      nil -> conn |> put_status(404) |> json(%{error: "not found"})
-      room -> conn |> put_status(200) |> json(%{room: room})
+    user = conn.assigns.current_user
+
+    with %Rooms.Room{} = room <- Rooms.get_room(id),
+         true <- user.id == room.creator_id || !room.is_private do
+      conn |> put_status(200) |> json(%{room: room})
+    else
+      nil ->
+        conn |> put_status(404) |> json(%{room: "комната не найдена"})
     end
   end
 
@@ -43,7 +48,7 @@ defmodule ChatWeb.ApiRoomsController do
              is_private: is_private,
              name: "#{user.name} / #{contact.name}"
            }),
-         {:ok, [member1, member2]} <- RoomMembers.on_room_create(room.id, user.id, contact.id) do
+         {:ok, [_member1, _member2]} <- RoomMembers.on_room_create(room.id, user.id, contact.id) do
       conn
       |> put_status(201)
       |> json(%{
