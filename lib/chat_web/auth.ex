@@ -4,7 +4,7 @@ defmodule ChatWeb.Auth do
   @doc """
   Extracts token from request headers.
   Accepts connection.
-  Returns {:error, reason} or {:ok, token} 
+  Returns {:error, reason} or {:ok, token}
   """
   def extract_token(conn) do
     case conn
@@ -13,10 +13,11 @@ defmodule ChatWeb.Auth do
       nil ->
         {:error, "missing token"}
 
-      value ->
-        "Bearer " <> token = value
-
+      "Bearer " <> token ->
         {:ok, token}
+
+      _ ->
+        {:error, "invalid token format"}
     end
   end
 

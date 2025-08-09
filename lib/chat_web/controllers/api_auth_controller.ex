@@ -55,7 +55,7 @@ defmodule ChatWeb.ApiAuthController do
 
         conn
         |> put_status(200)
-        |> json(%{data: data})
+        |> json(%{user: user})
       else
         _ ->
           conn
@@ -68,6 +68,33 @@ defmodule ChatWeb.ApiAuthController do
       # check this thing
       # todo tests
       e -> conn |> put_status(403) |> json(%{error: e})
+    end
+  end
+
+  def logout(conn, _) do
+    with {:ok, token} <- Auth.extract_token(conn),
+         {:ok, _data} <- Tokens.decrypt(token),
+         {:ok, _session} <- Sessions.get_session(token),
+         :ok <- Sessions.delete_session(token) do
+      conn |> put_status(200) |> json(%{message: "ok"})
+    else
+      {:error, "missing token"} ->
+        conn |> put_status(401) |> json(%{error: "Некорректный токен"})
+
+      {:error, "invalid token format"} ->
+        conn |> put_status(401) |> json(%{error: "Некорректный токен"})
+
+      {:error, "corrupted token"} ->
+        conn |> put_status(401) |> json(%{error: "Некорректный токен"})
+
+      {:error, :session_not_found} ->
+        conn |> put_status(404) |> json(%{error: "Сессия не найдена"})
+
+      {:error, reason} ->
+        conn |> put_status(500) |> json(%{error: "Ошибка при удалении сессии: #{inspect(reason)}"})
+
+      _ ->
+        conn |> put_status(401) |> json(%{error: "Некорректный токен"})
     end
   end
 end

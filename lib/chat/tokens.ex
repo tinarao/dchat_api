@@ -22,8 +22,7 @@ defmodule Chat.Tokens do
          {:ok, data} <- Jason.decode(plaintext) do
       {:ok, data}
     else
-      error ->
-        IO.inspect(error, label: "Decrypt error")
+      _error ->
         {:error, "corrupted token"}
     end
   end

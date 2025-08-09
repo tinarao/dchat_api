@@ -23,6 +23,7 @@ defmodule ChatWeb.Router do
     get "/auth/verify", ApiAuthController, :verify_session
     post "/auth/login", ApiAuthController, :login
     post "/auth/signup", ApiAuthController, :signup
+    delete "/auth/logout", ApiAuthController, :logout
 
     pipe_through :protected
     get "/rooms", ApiRoomsController, :list
@@ -30,6 +31,7 @@ defmodule ChatWeb.Router do
     get "/rooms/my", ApiRoomsController, :get_my_rooms
     get "/rooms/created_by_me", ApiRoomsController, :get_rooms_i_created
     post "/rooms", ApiRoomsController, :create
+    delete "/rooms/:id", ApiRoomsController, :delete_room
   end
 
   if Application.compile_env(:chat, :dev_routes) do

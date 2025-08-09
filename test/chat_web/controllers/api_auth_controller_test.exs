@@ -120,4 +120,80 @@ defmodule ChatWeb.ApiAuthControllerTest do
       assert response["error"] == "unauthorized"
     end
   end
+
+  describe "DELETE /api/auth/logout" do
+    test "request without token should fail", %{conn: conn} do
+      conn = delete(conn, ~p"/api/auth/logout")
+      assert conn.status == 401
+
+      response = json_response(conn, 401)
+      assert response["error"] == "Некорректный токен"
+    end
+
+    test "request with invalid token should fail", %{conn: conn} do
+      conn =
+        conn
+        |> put_req_header("authorization", "Bearer invalid_token")
+
+      conn = delete(conn, ~p"/api/auth/logout")
+      assert conn.status == 401
+
+      response = json_response(conn, 401)
+      assert response["error"] == "Некорректный токен"
+    end
+
+    test "request with valid token but non-existent session should fail", %{conn: conn} do
+      changeset = %{
+        name: "tinarao",
+        password: "123456_789"
+      }
+
+      UsersFixtures.user_fixture(changeset)
+      login_conn = post(conn, ~p"/api/auth/login", changeset)
+
+      assert login_conn.status == 201
+      response = json_response(login_conn, 201)
+      token = response["token"]
+
+      Sessions.delete_session(token)
+
+      conn =
+        conn
+        |> put_req_header("authorization", "Bearer " <> token)
+
+      conn = delete(conn, ~p"/api/auth/logout")
+      assert conn.status == 404
+
+      response = json_response(conn, 404)
+      assert response["error"] == "Сессия не найдена"
+    end
+
+    test "request with valid token and existing session should work", %{conn: conn} do
+      changeset = %{
+        name: "tinarao",
+        password: "123456_789"
+      }
+
+      UsersFixtures.user_fixture(changeset)
+      login_conn = post(conn, ~p"/api/auth/login", changeset)
+
+      assert login_conn.status == 201
+      response = json_response(login_conn, 201)
+      token = response["token"]
+
+      assert Sessions.session_exists?(token)
+
+      conn =
+        conn
+        |> put_req_header("authorization", "Bearer " <> token)
+
+      conn = delete(conn, ~p"/api/auth/logout")
+      assert conn.status == 200
+
+      response = json_response(conn, 200)
+      assert response["message"] == "ok"
+
+      refute Sessions.session_exists?(token)
+    end
+  end
 end
