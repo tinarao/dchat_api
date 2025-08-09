@@ -2,12 +2,13 @@ defmodule ChatWeb.ChatChannelChannel do
   use ChatWeb, :channel
 
   @impl true
-  def join("chat_channel:lobby", payload, socket) do
-    if authorized?(payload) do
-      {:ok, socket}
-    else
-      {:error, %{reason: "unauthorized"}}
-    end
+  def join("chat_channel:" <> room_id, payload, socket) do
+    {:ok, socket}
+    # if authorized?(payload) do
+    #   {:ok, socket}
+    # else
+    #   {:error, %{reason: "unauthorized"}}
+    # end
   end
 
   # Channels can be used in a request/response fashion

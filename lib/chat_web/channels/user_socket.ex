@@ -1,13 +1,6 @@
 defmodule ChatWeb.UserSocket do
   use Phoenix.Socket
 
-  # A Socket handler
-  #
-  # It's possible to control the websocket connection and
-  # assign values that can be accessed by your channel topics.
-
-  ## Channels
-
   channel "chat_channel:*", ChatWeb.ChatChannelChannel
 
   # Socket params are passed from the client and can

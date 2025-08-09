@@ -91,7 +91,9 @@ defmodule ChatWeb.ApiAuthController do
         conn |> put_status(404) |> json(%{error: "Сессия не найдена"})
 
       {:error, reason} ->
-        conn |> put_status(500) |> json(%{error: "Ошибка при удалении сессии: #{inspect(reason)}"})
+        conn
+        |> put_status(500)
+        |> json(%{error: "Ошибка при удалении сессии: #{inspect(reason)}"})
 
       _ ->
         conn |> put_status(401) |> json(%{error: "Некорректный токен"})
